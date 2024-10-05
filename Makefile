@@ -13,7 +13,7 @@ create_venv:
 
 install_reqs:
 	$(VENV_DIR)/bin/python3 -m pip install --upgrade pip
-	$(VENV_DIR)/bin/pip install -r requirements.txt
+	$(VENV_DIR)/bin/pip install -r flask/requirements.txt
 	@echo "Installing requirements in virtual environment."
 	$(VENV_DIR)/bin/pre-commit install
 	@echo "Pre-commit hooks installed."
