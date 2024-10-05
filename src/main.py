@@ -1,3 +1,6 @@
+from modules import video_stitching as vs
+
+
 def main():
     """Main program
 
@@ -9,6 +12,7 @@ def main():
 
     """
     # Code goes over here.
+    vs.stitch("/mnt/c/Stormhacks/src/modules/test-images")
     return 0
 
 
