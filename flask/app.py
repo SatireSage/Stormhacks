@@ -70,7 +70,7 @@ def index():
 
 # Function to run the Flask app
 def run_flask():
-    app.run(debug=True, port=5000, use_reloader=False)
+    app.run(port=5000, use_reloader=False)
 
 
 # Function to run the Taipy app
@@ -146,6 +146,3 @@ if __name__ == "__main__":
     # Wait for both processes to finish
     flask_process.join()
     taipy_process.join()
-
-# if __name__ == "__main__":
-#     app.run(host="0.0.0.0", port=5000, debug=True)

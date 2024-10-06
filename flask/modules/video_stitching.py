@@ -104,7 +104,7 @@ def stitch(
     # Initialize the video writer
     video = cv2.VideoWriter(
         filename=video_name,
-        fourcc=cv2.VideoWriter_fourcc(*"mp4v"),
+        fourcc=cv2.VideoWriter_fourcc(*"avc1"),
         fps=fps,
         frameSize=(width, height),
         isColor=isColor,

@@ -57,7 +57,7 @@ def add_member(username: str, password: str) -> None:
     existing_user = cursor.fetchone()
 
     if existing_user:
-        raise ValueError(f"Error: User '{username}' already exists.")
+        return
 
     # If the username does not exist, proceed to add the member
     try:
