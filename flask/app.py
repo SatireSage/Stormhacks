@@ -1,6 +1,7 @@
 import logging
 
 import modules.user_db as udb
+import modules.video_stitching as vs
 
 from flask import Flask
 from flask import render_template
@@ -27,12 +28,6 @@ def index():
         render_template with the base index html page
 
     """
-    # vs.stitch(image_folder="/mnt/c/Stormhacks/flask/static/test-images",
-    # video_name="output_video.mp4",
-    # fps=1,
-    # seconds_per_image=1,
-    # isColor=True)
-
     udb.initialize_db()
     try:
         udb.add_member("test", "password")  # Only add this once or check first
@@ -50,10 +45,19 @@ def index():
             logging.info(
                 "Account exists! Login successful.", "success"
             )  # Account exists
+            vs.stitch(
+                image_folder="static/images/",
+                video_name="static/videos/output_video.mp4",
+                fps=1,
+                seconds_per_image=1,
+                isColor=True,
+            )
+            return render_template("showcase.html")
         else:
             logging.info(
                 "Account does not exist. Please try again.", "error"
             )  # Account does not exist
+            return render_template("login.html", error=True)
 
     return render_template("login.html")  # Render login page
 

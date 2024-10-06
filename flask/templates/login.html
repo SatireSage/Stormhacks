@@ -10,6 +10,11 @@
     <div class="container">
         <h1>Welcome! Please Login Below</h1>
 
+        <!-- Display an error message if the credentials are incorrect -->
+        {% if error %}
+            <p style="color: red;">Invalid username or password. Please try again.</p>
+        {% endif %}
+
         <form method="POST" action="/">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" placeholder="Enter your username" required>
@@ -19,7 +24,7 @@
             <br>
             <input type="submit" value="Login">
         </form>
-
     </div>
 </body>
 </html>
+
