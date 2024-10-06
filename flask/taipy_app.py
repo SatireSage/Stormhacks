@@ -11,9 +11,7 @@
 # """
 #
 # Gui(page).run()
-
 ###################################################
-
 # from taipy import Gui
 #
 # list_to_display = [100/x for x in range(1, 100)]
@@ -30,9 +28,7 @@
 # """
 #
 # Gui(page).run()
-
 ###################################################
-
 # from flask import Flask
 # from taipy.gui import Gui
 # import threading
@@ -76,18 +72,18 @@
 #
 #     flask_thread.join()
 #     taipy_thread.join()
-
 ###################################################
+import multiprocessing
+
+from taipy.gui import Gui
 
 from flask import Flask
-from taipy.gui import Gui
-import multiprocessing
 
 # Create the Flask app
 app = Flask(__name__)
 
 # Data to display in the chart
-list_to_display = [100/x for x in range(1, 100)]
+list_to_display = [100 / x for x in range(1, 100)]
 
 page = f"""
 <|{{list_to_display}}|chart|>
@@ -96,21 +92,25 @@ page = f"""
 # Taipy GUI setup
 taipy_page = Gui(page)
 
+
 # Define the Flask route for the homepage
-@app.route('/')
+@app.route("/")
 def index():
     return """
     <h1>Welcome to the Flask Homepage!</h1>
     <p><a href="http://localhost:5001/">Go to Taipy Page</a></p>
     """
 
+
 # Function to run the Flask app
 def run_flask():
     app.run(debug=True, port=5000, use_reloader=False)
 
+
 # Function to run the Taipy app
 def run_taipy():
     taipy_page.run(port=5001, run_browser=False)  # Disable auto-launch of the browser
+
 
 if __name__ == "__main__":
     # Create processes for Flask and Taipy
@@ -124,4 +124,3 @@ if __name__ == "__main__":
     # Wait for both processes to finish
     flask_process.join()
     taipy_process.join()
-
