@@ -10,6 +10,9 @@ RUN apt-get update -qq \
       build-essential \
       python3-dev \
       libgl1-mesa-glx \
+      libglib2.0-0 \
+      libsm6 \
+      libxrender1 \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 

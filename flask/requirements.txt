@@ -7,8 +7,7 @@ platformdirs==4.2.2
 pre-commit==3.8.0
 PyYAML==6.0.1
 virtualenv==20.26.3
-Flask==2.2.5
-Werkzeug==2.2.2
+Werkzeug
 MarkupSafe==2.1.1
 opencv-python==4.10.0.84
 pillow==10.4.0
@@ -37,7 +36,7 @@ Django==5.1.1
 dnspython==2.7.0
 et-xmlfile==1.1.0
 filelock==3.15.4
-Flask==3.0.2
+Flask
 Flask-Cors==4.0.0
 Flask-RESTful==0.3.10
 Flask-SocketIO==5.3.6
@@ -105,7 +104,6 @@ tzdata==2024.2
 tzlocal==5.2
 urllib3==2.2.3
 virtualenv==20.26.3
-Werkzeug==3.0.4
 wsproto==1.2.0
 zope.event==5.0
 zope.interface==7.0.3
