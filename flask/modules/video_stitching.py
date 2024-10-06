@@ -9,6 +9,11 @@ logging.basicConfig(
 )
 
 
+def sort_images(image_folder: str) -> list:
+    images = list(os.listdir(image_folder))
+    return sorted(images)
+
+
 def check_video(video_name: str) -> str:
     """
     Checks if the video name already exists. If it does, appends a
@@ -79,11 +84,7 @@ def stitch(
         return
 
     # Get list of images in the folder
-    images = [
-        img
-        for img in os.listdir(image_folder)
-        if img.endswith((".png", ".jpg", ".jpeg"))
-    ]
+    images = sort_images(image_folder=image_folder)
 
     # Check if the video name is already taken and get a valid filename
     video_name = check_video(video_name)

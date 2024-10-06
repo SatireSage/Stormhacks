@@ -46,7 +46,7 @@ def index():
                 "Account exists! Login successful.", "success"
             )  # Account exists
             vs.stitch(
-                image_folder="static/images/",
+                image_folder="static/test-images/",
                 video_name="static/videos/output_video.mp4",
                 fps=1,
                 seconds_per_image=1,
