@@ -6,8 +6,6 @@ import re
 import modules.user_db as udb
 import modules.video_stitching as vs
 import pandas
-from PIL import Image
-from PIL.ExifTags import TAGS
 from taipy.gui import Gui
 
 from flask import Flask
@@ -81,28 +79,22 @@ def run_taipy():
 
 def get_photo_timestamp(photo_path):
     try:
-        # Open the image file
-        img = Image.open(photo_path)
+        # Extract the date in the format YYYYMMDD
+        date_match = re.search(r"_(\d{8})_(\d{6})\.jpg$", photo_path)
+        if not date_match:
+            return "Error: Date or time not found in filename."
 
-        # Extract EXIF data
-        exif_data = img._getexif()
+        date_str = date_match.group(1)
+        time_str = date_match.group(2)  # Extract the time HHMMSS
 
-        # Dictionary to hold the extracted EXIF data
-        exif_info = {}
+        year = date_str[0:4]  # Extract the year
+        month = date_str[4:6]  # Extract the month
+        day = date_str[6:8]  # Extract the day
 
-        # Loop through the EXIF tags
-        if exif_data:
-            for tag, value in exif_data.items():
-                decoded_tag = TAGS.get(tag, tag)
-                exif_info[decoded_tag] = value
+        formatted_date = f"{year}-{month}-{day}"  # Format date as YYYY-MM-DD
+        formatted_time = f"{time_str[0:2]}:{time_str[2:4]}:{time_str[4:6]}"  # Format time as HH:MM:SS
 
-            # Return the DateTimeOriginal (when the photo was taken)
-            timestamp = exif_info.get("DateTimeOriginal", "No Timestamp Found")
-            img.close()
-            return re.findall(r"\d+:\d+:\d+", timestamp)
-        else:
-            img.close()
-            return None
+        return formatted_date, formatted_time
 
     except Exception as e:
         return f"Error: {e}"
@@ -118,13 +110,14 @@ for photo in photos:
 # Data to display in the chart
 # Convert the pairs into a single datetime object
 datetimes.sort()
+
+# Convert time into floating-point hours (HH.MM)
 data = {
-    "Date": pandas.to_datetime(
-        [date[0].replace(":", ";") for date in datetimes]
-    ),  # Convert dates to datetime
+    "Date": pandas.to_datetime([date[0] for date in datetimes]),
     "Time(h)": [
-        int(date[1][0] + date[1][1]) for date in datetimes
-    ],  # Convert times to time objects
+        int(date[1][0:2]) + int(date[1][3:5]) / 60 + int(date[1][6:]) / 3600
+        for date in datetimes
+    ],  # Convert time to hours with decimals
 }
 
 page = """
