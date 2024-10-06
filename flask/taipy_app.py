@@ -1,105 +1,23 @@
-# from taipy import Gui
-#
-# list_to_display = [100/x for x in range(1, 100)]
-# image_path = "/Users/sahajsingh/Downloads/test.png"  # Use the actual path to your local image
-#
-# # GUI definition with local image
-# page = f"""
-# <|{{list_to_display}}|chart|>
-#
-# <|{{image_path}}|image|>
-# """
-#
-# Gui(page).run()
-###################################################
-# from taipy import Gui
-#
-# list_to_display = [100/x for x in range(1, 100)]
-# video_path = "/Users/sahajsingh/Downloads/colton.mp4"  # Replace this with your actual local video path
-#
-# # GUI definition with local video
-# page = f"""
-# <|{{list_to_display}}|chart|>
-#
-# <video width="400" height="300" controls>
-#   <source src="{video_path}" type="video/mp4" />
-#   Your browser does not support the video tag.
-# </video>
-# """
-#
-# Gui(page).run()
-###################################################
-# from flask import Flask
-# from taipy.gui import Gui
-# import threading
-#
-# # Create the Flask app
-# app = Flask(__name__)
-#
-# # Data to display in the chart
-# list_to_display = [100/x for x in range(1, 100)]
-#
-# page = f"""
-# <|{{list_to_display}}|chart|>
-# """
-#
-# # Taipy GUI setup
-# taipy_page = Gui(page)
-#
-# # Define the Flask route for the homepage
-# @app.route('/')
-# def index():
-#     return """
-#     <h1>Welcome to the Flask Homepage!</h1>
-#     <p><a href="http://localhost:5001/">Go to Taipy Page</a></p>
-#     """
-#
-# # Function to run the Flask app
-# def run_flask():
-#     app.run(debug=True, port=5000, use_reloader=False)
-#
-# # Function to run the Taipy app
-# def run_taipy():
-#     taipy_page.run(port=5001)
-#
-# if __name__ == "__main__":
-#     # Run Flask and Taipy on separate threads
-#     flask_thread = threading.Thread(target=run_flask)
-#     taipy_thread = threading.Thread(target=run_taipy)
-#
-#     flask_thread.start()
-#     taipy_thread.start()
-#
-#     flask_thread.join()
-#     taipy_thread.join()
-###################################################
+import glob
 import multiprocessing
+import re
 
+import pandas
+from PIL import Image
+from PIL.ExifTags import TAGS
 from taipy.gui import Gui
 
 from flask import Flask
+from flask import render_template
 
 # Create the Flask app
 app = Flask(__name__)
-
-# Data to display in the chart
-list_to_display = [100 / x for x in range(1, 100)]
-
-page = f"""
-<|{{list_to_display}}|chart|>
-"""
-
-# Taipy GUI setup
-taipy_page = Gui(page)
 
 
 # Define the Flask route for the homepage
 @app.route("/")
 def index():
-    return """
-    <h1>Welcome to the Flask Homepage!</h1>
-    <p><a href="http://localhost:5001/">Go to Taipy Page</a></p>
-    """
+    return render_template("progresspics.html")
 
 
 # Function to run the Flask app
@@ -109,8 +27,64 @@ def run_flask():
 
 # Function to run the Taipy app
 def run_taipy():
-    taipy_page.run(port=5001, run_browser=False)  # Disable auto-launch of the browser
+    # run_browser = False disables auto launch of browser
+    taipy_page.run(port=5001, run_browser=False)
 
+
+def get_photo_timestamp(photo_path):
+    try:
+        # Open the image file
+        img = Image.open(photo_path)
+
+        # Extract EXIF data
+        exif_data = img._getexif()
+
+        # Dictionary to hold the extracted EXIF data
+        exif_info = {}
+
+        # Loop through the EXIF tags
+        if exif_data:
+            for tag, value in exif_data.items():
+                decoded_tag = TAGS.get(tag, tag)
+                exif_info[decoded_tag] = value
+
+            # Return the DateTimeOriginal (when the photo was taken)
+            timestamp = exif_info.get("DateTimeOriginal", "No Timestamp Found")
+            img.close()
+            return re.findall(r"\d+:\d+:\d+", timestamp)
+        else:
+            img.close()
+            return None
+
+    except Exception as e:
+        return f"Error: {e}"
+
+
+# Glob the directory and get all photos then parse timestamp data
+photos = glob.glob("flask/static/images/*")
+datetimes = []
+for photo in photos:
+    metadata = get_photo_timestamp(photo)
+    if metadata is not None:
+        datetimes.append(metadata)
+# Data to display in the chart
+# Convert the pairs into a single datetime object
+datetimes.sort()
+data = {
+    "Date": pandas.to_datetime(
+        [date[0].replace(":", ";") for date in datetimes]
+    ),  # Convert dates to datetime
+    "Time(h)": [
+        int(date[1][0] + date[1][1]) for date in datetimes
+    ],  # Convert times to time objects
+}
+
+page = """
+<|{data}|chart|mode=lines|x=Date|y=Time(h)|>
+"""
+
+# Taipy GUI setup
+taipy_page = Gui(page)
 
 if __name__ == "__main__":
     # Create processes for Flask and Taipy
