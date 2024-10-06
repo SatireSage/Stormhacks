@@ -3,8 +3,24 @@ import os
 import cv2
 
 
-def stitch(image_folder):
-    video_name = "Stitched-Video.mp4"
+def check_video(video_name: str) -> bool:
+    """
+    Checks if the video name already exists. If it does, append a number to prevent overwriting the existing video.
+
+    Parameters:
+        video_name (str):
+
+    Returns:
+        bool: 
+
+    """
+
+
+def check_image_folder(image_folder: str) -> bool:
+    """
+    Check if the image folder exits and if there are images present.
+
+    """
 
     images = [
         img
@@ -13,19 +29,35 @@ def stitch(image_folder):
     ]
 
     if not images:
+        return False
 
-        return
+
+# def stitch(params**) -> None:
+def stitch(image_folder: str, video_name: str, fps: int, seconds_per_image: int, height: int, width: int, isColor: bool) -> None:
+    """
+    Combines static images into a video.
+
+    Parameters:
+        image_folder (str)
+        video_name (str):
+        ...
+
+    Returns:
+        bool: 
+
+    """
+
+    # Call check image folder
+        # If folder and images exist then get the images
+    # Call check video name
 
     first_image_path = os.path.join(image_folder, images[0])
     image_details = cv2.imread(first_image_path)
 
     if image_details is None:
-
         return
 
     height, width, layers = image_details.shape
-    fps = 1
-    seconds_per_image = 1
 
     video = cv2.VideoWriter(
         filename=video_name,
