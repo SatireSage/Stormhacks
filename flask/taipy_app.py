@@ -61,7 +61,7 @@ def get_photo_timestamp(photo_path):
 
 
 # Glob the directory and get all photos then parse timestamp data
-photos = glob.glob("flask/static/images/*")
+photos = glob.glob("static/images/*")
 datetimes = []
 for photo in photos:
     metadata = get_photo_timestamp(photo)
